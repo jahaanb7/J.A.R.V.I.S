@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Buffy</title>
+    <link rel="stylesheet" href="orb.css" />
+  </head>
+  <body>
+    <main class="shell" id="shell">
+      <div class="head" id="head" data-drag>
+        <canvas id="orb" class="orb" role="button" tabindex="0" aria-label="Buffy. Click to open or close the panel."></canvas>
+        <div class="head-text">
+          <span class="label">BUFFY // <span id="status">STANDBY</span></span>
+          <span class="meta">Alt+Space shows or hides me</span>
+        </div>
+        <div class="head-actions">
+          <button type="button" id="mute" class="chip" aria-pressed="false" title="Speak replies aloud">VOICE ON</button>
+          <button type="button" id="open-main" class="chip" title="Open the Buffy window">OPEN</button>
+          <button type="button" id="collapse" class="chip" title="Collapse (Esc)" aria-label="Collapse">&times;</button>
+        </div>
+      </div>
+
+      <section class="panel" aria-label="Ask Buffy">
+        <div class="transcript" id="transcript" aria-live="polite">
+          <p class="empty">Ask me anything, or press the mic and speak.</p>
+        </div>
+        <form class="composer" id="composer">
+          <button type="button" id="mic" class="mic" title="Speak your question" aria-label="Speak your question">
+            <span class="mic-dot" aria-hidden="true"></span>
+          </button>
+          <input id="input" type="text" placeholder="Ask anything" autocomplete="off" spellcheck="false" aria-label="Your question" />
+          <button type="submit" id="send" class="send">SEND</button>
+        </form>
+        <p class="note" id="note" role="status"></p>
+      </section>
+    </main>
+    <script src="orb.js"></script>
+  </body>
+</html>

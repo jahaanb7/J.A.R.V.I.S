@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Buffy</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand drag">
+      <div class="logo" aria-hidden="true">B</div>
+      <div>
+        <div class="brand-name">Buffy</div>
+        <div class="brand-sub" id="model-status">Checking model…</div>
+      </div>
+    </div>
+
+    <nav class="nav" aria-label="Sections">
+      <button class="nav-item active" data-view="today"><span class="ico">◎</span>Today</button>
+      <button class="nav-item" data-view="chat"><span class="ico">✦</span>Chat</button>
+      <button class="nav-item" data-view="schedule"><span class="ico">▦</span>Schedule</button>
+      <button class="nav-item" data-view="tasks"><span class="ico">✓</span>Tasks</button>
+      <button class="nav-item" data-view="widgets"><span class="ico">❖</span>Widgets</button>
+      <button class="nav-item" data-view="approvals"><span class="ico">⚑</span>Approvals <span class="badge" id="approval-badge" hidden>0</span></button>
+      <button class="nav-item" data-view="memory"><span class="ico">✎</span>Memory</button>
+      <button class="nav-item" data-view="activity"><span class="ico">≋</span>Activity</button>
+      <button class="nav-item" data-view="phone"><span class="ico">▯</span>Phone</button>
+    </nav>
+
+    <div class="side-foot">
+      <div class="pause-state" id="pause-status"></div>
+      <button id="pause-btn" class="btn danger wide">Pause all actions</button>
+      <div class="hint">Sticky notes: <kbd>⌘</kbd><kbd>⇧</kbd><kbd>S</kbd></div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="toast" id="toast" role="status"></div>
+
+    <!-- Today -->
+    <section class="view active" id="view-today">
+      <header class="page-head">
+        <div>
+          <h1 id="greeting">Today</h1>
+          <p class="muted" id="today-date"></p>
+        </div>
+      </header>
+      <div class="grid">
+        <article class="card span-2">
+          <h2 class="card-title">Briefing</h2>
+          <p class="briefing" id="briefing-text">Loading…</p>
+          <ul class="list" id="briefing-events"></ul>
+        </article>
+        <article class="card">
+          <h2 class="card-title">Quick sticky note</h2>
+          <p class="muted small">It appears over any app and hides by itself.</p>
+          <form id="sticky-form" class="stack">
+            <textarea id="sticky-text" rows="3" placeholder="Buy milk on the way home"></textarea>
+            <div class="row">
+              <input id="sticky-seconds" type="number" min="3" max="600" value="25" aria-label="Seconds" />
+              <span class="muted small">seconds</span>
+              <button type="submit" class="btn primary grow">Show note</button>
+            </div>
+          </form>
+        </article>
+        <article class="card span-3">
+          <h2 class="card-title">Open tasks</h2>
+          <ul class="list" id="today-tasks"></ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- Chat -->
+    <section class="view" id="view-chat">
+      <header class="page-head"><div><h1>Chat</h1><p class="muted">Ask Buffy, or say what you need in plain words.</p></div></header>
+      <article class="card chat-card">
+        <div id="chat-log" class="chat-log"></div>
+        <form id="chat-form" class="composer">
+          <input id="chat-input" placeholder="Add physics review tomorrow 4pm to 5pm" autocomplete="off" />
+          <button id="mic-btn" type="button" class="btn ghost" title="Speak">🎤</button>
+          <label class="check"><input id="speak-replies" type="checkbox" /> Speak</label>
+          <button type="submit" class="btn primary">Send</button>
+        </form>
+      </article>
+    </section>
+
+    <!-- Schedule -->
+    <section class="view" id="view-schedule">
+      <header class="page-head"><div><h1>Schedule</h1><p class="muted">The next seven days. Conflicts are flagged the moment they appear.</p></div></header>
+      <div class="grid">
+        <article class="card span-2">
+          <h2 class="card-title">Coming up</h2>
+          <ul class="list" id="schedule-list"></ul>
+        </article>
+        <article class="card">
+          <h2 class="card-title">Add event</h2>
+          <form id="event-form" class="stack">
+            <input id="event-title" placeholder="Event title" required />
+            <label class="field">Start <input id="event-start" type="datetime-local" required /></label>
+            <label class="field">End <input id="event-end" type="datetime-local" required /></label>
+            <button type="submit" class="btn primary">Add event</button>
+          </form>
+        </article>
+      </div>
+    </section>
+
+    <!-- Tasks -->
+    <section class="view" id="view-tasks">
+      <header class="page-head"><div><h1>Tasks</h1><p class="muted">Open items, most important first.</p></div></header>
+      <div class="grid">
+        <article class="card span-2">
+          <ul class="list" id="task-list"></ul>
+        </article>
+        <article class="card">
+          <h2 class="card-title">New task</h2>
+          <form id="task-form" class="stack">
+            <input id="task-title" placeholder="What needs doing?" required />
+            <button type="submit" class="btn primary">Add task</button>
+          </form>
+        </article>
+      </div>
+    </section>
+
+    <!-- Widgets -->
+    <section class="view" id="view-widgets">
+      <header class="page-head">
+        <div><h1>Widgets</h1><p class="muted">Small things that float above your apps. Ask Buffy to build a new one, for example “make a pomodoro timer widget”.</p></div>
+      </header>
+      <div class="widget-grid" id="widget-grid"></div>
+    </section>
+
+    <!-- Approvals -->
+    <section class="view" id="view-approvals">
+      <header class="page-head"><div><h1>Approvals</h1><p class="muted">Buffy waits here before deleting things or acting outside your computer.</p></div></header>
+      <ul class="list" id="approval-list"></ul>
+    </section>
+
+    <!-- Memory -->
+    <section class="view" id="view-memory">
+      <header class="page-head"><div><h1>Memory</h1><p class="muted">Things Buffy remembers about you. Forget any of them at any time.</p></div></header>
+      <div class="grid">
+        <article class="card span-2">
+          <ul class="list" id="memory-list"></ul>
+        </article>
+        <article class="card">
+          <h2 class="card-title">Remember something</h2>
+          <form id="memory-form" class="stack">
+            <input id="memory-input" placeholder="I'm applying to Ivy League schools next year" required />
+            <button type="submit" class="btn primary">Remember</button>
+          </form>
+        </article>
+      </div>
+    </section>
+
+    <!-- Activity -->
+    <section class="view" id="view-activity">
+      <header class="page-head"><div><h1>Activity</h1><p class="muted">Every action Buffy took or refused, and why.</p></div></header>
+      <article class="card"><ul class="list" id="audit-list"></ul></article>
+    </section>
+
+    <!-- Phone -->
+    <section class="view" id="view-phone">
+      <header class="page-head"><div><h1>Phone</h1><p class="muted">Chat with Buffy from your phone on the same Wi-Fi.</p></div></header>
+      <div class="grid">
+        <article class="card span-2">
+          <h2 class="card-title">Open this on your phone</h2>
+          <div class="codebox"><code id="companion-url">starting…</code></div>
+          <h2 class="card-title mt">Pairing token</h2>
+          <div class="codebox"><code id="companion-token"></code></div>
+          <p class="muted small">Keep this token private. Anyone with it can chat with Buffy and approve actions.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
